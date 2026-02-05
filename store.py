@@ -1,5 +1,3 @@
-import products
-
 
 class Store:
     """Represents a store that holds and sells products."""
@@ -24,6 +22,7 @@ class Store:
         """Return a list of active products."""
         return [p for p in self.products if p.is_active()]
 
+    @staticmethod
     def order(self, shopping_list):
         """Buy products from a list of (Product, quantity) and return total."""
         total_price = 0.0
