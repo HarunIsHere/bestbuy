@@ -1,0 +1,95 @@
+import products
+import store
+
+
+def list_products(store_obj):
+    active_products = store_obj.get_all_products()
+    print("------")
+    for i, prod in enumerate(active_products, start=1):
+        print(f"{i}. {prod.name}, Price: ${int(prod.price) if prod.price == int(prod.price) else prod.price}, Quantity: {prod.get_quantity()}")
+    print("------")
+    return active_products
+
+
+def make_order(store_obj):
+    active_products = list_products(store_obj)
+
+    shopping_list = []
+    print("When you want to finish order, enter empty text.")
+
+    while True:
+        choice = input("Which product # do you want? ")
+        if choice == "":
+            break
+
+        amount_str = input("What amount do you want? ")
+        if amount_str == "":
+            print("********")
+            break
+
+        try:
+            choice_num = int(choice)
+            amount = int(amount_str)
+
+            if choice_num < 1 or choice_num > len(active_products):
+                raise Exception()
+            if amount <= 0:
+                raise Exception()
+
+            product = active_products[choice_num - 1]
+
+            if amount > product.get_quantity():
+                raise Exception()
+
+            shopping_list.append((product, amount))
+            print("Product added to list!\n")
+
+        except Exception:
+            print("Error adding product!\n")
+
+    if not shopping_list:
+        return
+
+    total_price = store_obj.order(shopping_list)
+    total_price_int = int(total_price) if total_price == int(total_price) else total_price
+    print(f"Order made! Total payment: ${total_price_int}\n")
+
+
+def start(store_obj):
+    while True:
+        print("""
+   Store Menu
+   ----------
+1. List all products in store
+2. Show total amount in store
+3. Make an order
+4. Quit
+""".rstrip())
+
+        choice = input("Please choose a number: ")
+
+        if choice == "1":
+            list_products(store_obj)
+        elif choice == "2":
+            print(f"Total of {store_obj.get_total_quantity()} items in store\n")
+        elif choice == "3":
+            make_order(store_obj)
+        elif choice == "4":
+            break
+
+
+def main():
+    # setup initial stock of inventory
+    product_list = [
+        products.Product("MacBook Air M2", price=1450, quantity=100),
+        products.Product("Bose QuietComfort Earbuds", price=250, quantity=500),
+        products.Product("Google Pixel 7", price=500, quantity=250),
+    ]
+    best_buy = store.Store(product_list)
+
+    start(best_buy)
+
+
+if __name__ == "__main__":
+    main()
+
